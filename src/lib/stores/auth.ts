@@ -15,7 +15,6 @@ function createAuthStore() {
 
     return {
         subscribe,
-
         // Initialize auth state from localStorage
         init: () => {
             if (!browser) return;

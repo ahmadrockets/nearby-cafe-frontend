@@ -1,15 +1,17 @@
-<!-- src/routes/login/+page.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { authStore } from '$lib/stores/auth';
   import { getGoogleOAuthUrl } from '$lib/auth/google';
 
+  authStore.init();
+
   // Redirect if already authenticated
   onMount(() => {
     if ($authStore.isAuthenticated) {
       goto('/dashboard');
     }
+
     console.log($authStore);
   });
 
