@@ -11,8 +11,6 @@
     if ($authStore.isAuthenticated) {
       goto('/dashboard');
     }
-
-    console.log($authStore);
   });
 
   function handleGoogleLogin() {
@@ -24,7 +22,7 @@
 </script>
 
 <svelte:head>
-  <title>Login - MyApp</title>
+  <title>Login - Nearby Cafe</title>
 </svelte:head>
 
 <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -34,7 +32,7 @@
         Sign in to your account
       </h2>
       <p class="mt-2 text-center text-sm text-gray-600">
-        Use your Google account to access MyApp
+        Use your Google account to access Nearby Cafe
       </p>
     </div>
     
