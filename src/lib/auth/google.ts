@@ -1,13 +1,7 @@
-import { dev } from '$app/environment';
+import { PUBLIC_API_URL } from '$env/static/public';
 
 export const GOOGLE_OAUTH_CONFIG = {
-    backendUrl: dev
-        ? 'http://localhost:3000'
-        : 'http://backend.com',
-
-    frontendUrl: dev
-        ? 'http://localhost:5173'
-        : 'https://yourapp.com'
+    backendUrl: PUBLIC_API_URL
 };
 
 export function getGoogleOAuthUrl(): string {

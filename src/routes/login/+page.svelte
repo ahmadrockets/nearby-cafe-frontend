@@ -42,7 +42,7 @@
           <button
             on:click={handleGoogleLogin}
             disabled={$authStore.loading}
-            class="group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="cursor-pointer group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span class="absolute left-0 inset-y-0 flex items-center pl-3">
               <svg class="h-5 w-5 text-red-500" viewBox="0 0 24 24">

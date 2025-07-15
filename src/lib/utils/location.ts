@@ -1,3 +1,4 @@
+import { PUBLIC_DEFAULT_LATITUDE, PUBLIC_DEFAULT_LONGITUDE } from '$env/static/public';
 export function getLocation(): Promise<GeolocationPosition> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -27,7 +28,7 @@ export function getLocation(): Promise<GeolocationPosition> {
   });
 }
 
-export async function fetchLocation(): Promise<string>{
+export async function fetchLocation(): Promise<[string, any, any]>{
     let latitude = null;
     let longitude = null;
     try {
@@ -35,12 +36,11 @@ export async function fetchLocation(): Promise<string>{
         latitude = position.coords.latitude;
         longitude = position.coords.longitude;
     } catch (err) {
-        latitude = -7.7338235;
-        longitude = 110.4026947;
-        console.log("Error get current location", err)
+        latitude = PUBLIC_DEFAULT_LATITUDE; // set default location
+        longitude = PUBLIC_DEFAULT_LONGITUDE; // set default location
     }
     let currentLocation = await reverseGeocode(String(latitude), String(longitude));
-    return currentLocation;
+    return [currentLocation, latitude, longitude];
 }
 
 export async function reverseGeocode(latitude: string, longitude: string): Promise<string> {
