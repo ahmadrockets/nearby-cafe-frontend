@@ -6,7 +6,6 @@
 
   authStore.init();
 
-  // Redirect if already authenticated
   onMount(() => {
     if ($authStore.isAuthenticated) {
       goto('/dashboard');

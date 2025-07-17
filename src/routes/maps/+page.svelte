@@ -13,20 +13,20 @@
 
 	authStore.init();
 
+	let mapZoom 		= $state(15)
 	let currentLocation = $state('');
-	let initLatitude = $state(PUBLIC_DEFAULT_LATITUDE);
-	let initLongtude = $state(PUBLIC_DEFAULT_LONGITUDE);
+	let initLatitude 	= $state(PUBLIC_DEFAULT_LATITUDE);
+	let initLongtude 	= $state(PUBLIC_DEFAULT_LONGITUDE);
 	let initialView: LatLngExpression = $state([Number(initLatitude), Number(initLongtude)]);
-	let mapZoom = $state(15)
-	let markerLocations: LeafletPlace[] = $state([]);
-	let markerCurrentLocation: LeafletPlace[] = $state([{latlang: [Number(initLatitude), Number(initLongtude)], name: 'Current Location'}]);
-	let routeCoords: [number, number][] = $state([]);
+	let markerLocations: LeafletPlace[] 		= $state([]);
+	let markerCurrentLocation: LeafletPlace[] 	= $state([{latlang: [Number(initLatitude), Number(initLongtude)], name: 'Current Location'}]);
+	let routeCoords: [number, number][] 		= $state([]);
 
 	async function initLocation() {
 		try {
-		[currentLocation, initLatitude, initLongtude] = await fetchLocation();
+			[currentLocation, initLatitude, initLongtude] = await fetchLocation();
 		} catch (error) {
-		error = 'Failed to fetch data';
+			error = 'Failed to fetch data';
 		}
 	}
 
@@ -42,13 +42,13 @@
 
 	async function handleRoutes(destination: [number, number]){
 		try {
-			routeCoords = [];
-			const routes = await fetchRoute([Number(initLongtude), Number(initLatitude)], destination);
-			routeCoords = routes.map(
+			routeCoords 	= [];
+			const routes 	= await fetchRoute([Number(initLongtude), Number(initLatitude)], destination);
+			routeCoords 	= routes.map(
 				([lng, lat]) => [lat, lng]
 			);
-			initialView = [Number(destination[1]), Number(destination[0])];
-			mapZoom= 14;
+			initialView 	= [Number(destination[1]), Number(destination[0])];
+			mapZoom 		= 14;
 		} catch (error) {
 			error = 'Failed to fetch places';
 		}
@@ -56,7 +56,7 @@
 
 	onMount(() => {
 		if (!$authStore.isAuthenticated) {
-		goto('/');
+			goto('/');
 		}
 		initLocation();
 		// initPlaces();
@@ -75,7 +75,7 @@
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
-			<div class="p-3">Now you're in {currentLocation}</div> 
+			<div class="p-3">Now you're in {currentLocation}. What I can help you?</div> 
             <div class="bg-gray-100 rounded-xl text-secondary-foreground p-3 w-max ml-auto">Saya cari cafe terdekat</div>
             <div class="p-3">Baik, ini daftar terdekat.</div>
         </div>
