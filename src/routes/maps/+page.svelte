@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
   	import { goto } from '$app/navigation';
-	import type { LatLngExpression } from 'leaflet';
+	import { marker, type LatLngExpression } from 'leaflet';
 	import Leaflet from '$lib/components/Leaflet.svelte';
 	import Marker from '$lib/components/Marker.svelte';
 	import Popup from '$lib/components/Popup.svelte';
 	import Polyline from '$lib/components/Polyline.svelte';
 	import { fetchLocation, getNearbyPlaces, fetchRoute } from '$lib/utils/location';
+	import { fetchAgent } from "$lib/utils/chat";
 	import type {LeafletPlace} from '$lib/types/place';
   	import { authStore } from '$lib/stores/auth';
 	import { PUBLIC_DEFAULT_LATITUDE, PUBLIC_DEFAULT_LONGITUDE } from '$env/static/public';
@@ -15,6 +16,8 @@
 
 	let mapZoom 		= $state(15)
 	let currentLocation = $state('');
+	let message 		= $state('');
+	let chatHistory: { sender: 'user' | 'bot'; text: string }[] = $state([]);
 	let initLatitude 	= $state(PUBLIC_DEFAULT_LATITUDE);
 	let initLongtude 	= $state(PUBLIC_DEFAULT_LONGITUDE);
 	let initialView: LatLngExpression = $state([Number(initLatitude), Number(initLongtude)]);
@@ -25,12 +28,14 @@
 	async function initLocation() {
 		try {
 			[currentLocation, initLatitude, initLongtude] = await fetchLocation();
+			chatHistory.push({ sender: 'bot', text: `Now you're in ${currentLocation}. What I can help you?` });
 		} catch (error) {
 			error = 'Failed to fetch data';
 		}
 	}
 
 	async function initPlaces(){
+		console.log('run initPlaces')
 		try {
 			markerLocations = await getNearbyPlaces(initLatitude, initLongtude);
 			mapZoom = 13;
@@ -51,6 +56,37 @@
 			mapZoom 		= 14;
 		} catch (error) {
 			error = 'Failed to fetch places';
+		}
+	}
+
+	async function handleChat(){
+		try {
+			chatHistory.push({ sender: 'user', text: message });
+			let messageFetch = message;
+			message = '';
+
+			// fetch agent
+			const agentRes = await fetchAgent(messageFetch, initLatitude, initLongtude);
+			chatHistory.push({sender:'bot', text: agentRes.data.answer});
+
+			// handle agent
+			handleAgent(agentRes);
+
+		} catch (error) {
+			error = 'Failed to fetch places';
+		}
+	}
+
+	async function handleAgent(input: any){
+		switch (input.data.intent) {
+			case "change_current_location":
+				initialView 	= [Number(input.data.center_coordinates.lat), Number(input.data.center_coordinates.lng)];
+				markerCurrentLocation = [];
+				markerCurrentLocation = [{latlang: [Number(input.data.center_coordinates.lat), Number(input.data.center_coordinates.lng)], name: 'Current Location'}];
+				break;
+		
+			default:
+				break;
 		}
 	}
 
@@ -75,18 +111,19 @@
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
-			<div class="p-3">Now you're in {currentLocation}. What I can help you?</div> 
-            <div class="bg-gray-100 rounded-xl text-secondary-foreground p-3 w-max ml-auto">Saya cari cafe terdekat</div>
-            <div class="p-3">Baik, ini daftar terdekat.</div>
+			{#each chatHistory as chat}
+				<div class="{chat.sender === 'user' ? 'bg-gray-100 rounded-xl text-secondary-foreground p-3 w-max ml-auto' : 'p-3'}">{chat.text}</div> 
+			{/each}
         </div>
 
         <form class="p-4 border-t flex gap-2 bg-white ">
             <input
+			bind:value={message}
             type="text"
-            placeholder="Tulis pesan..."
+            placeholder="Ketik pesan..."
             class="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring"
             />
-            <button type="submit" class="gap-2 inline-flex justify-center rounded-full text-sm/6 font-semibold text-gray-950 ring-1 ring-gray-950/10 hover:ring-gray-950/20 px-4 py-2">Send</button>
+            <button onclick={handleChat}  type="submit" class="gap-2 inline-flex justify-center rounded-full text-sm/6 font-semibold text-gray-950 ring-1 ring-gray-950/10 hover:ring-gray-950/20 px-4 py-2">Send</button>
         </form>
     </div>
 
@@ -95,6 +132,7 @@
 		{#if routeCoords.length > 0}
 		<Polyline positions={routeCoords} color="red" weight={6} />
 		{/if}
+
 		{#each markerCurrentLocation as rowCurrentLocation}
 			<Marker latLng={rowCurrentLocation.latlang} width={40} height={40}>
 				<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 64 64">
@@ -107,6 +145,7 @@
 				</Popup>
 			</Marker>
 		{/each}
+
 		{#each markerLocations as rowdata}
 			<Marker latLng={rowdata.latlang} width={40} height={40}>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48">
