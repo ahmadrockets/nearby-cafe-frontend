@@ -7,6 +7,9 @@
 ![Nearby Cafe ](./screenshot/chat_nearby_cafe.jpeg)
 ![Finding Route ](./screenshot/route.jpeg)
 
+## Demo 
+Watch on youtube : [Svelte](https://www.youtube.com/watch?v=bHFIHSrG6VU)
+
 ## 🔥 Built With
 - [Svelte](https://svelte.dev/)
 - [TailwindCSS](https://tailwindcss.com/)
