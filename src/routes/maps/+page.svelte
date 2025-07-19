@@ -84,7 +84,8 @@
 
 	async function handleAgent(input: any){
 		// reset data
-		if (input.data.intent!="goodbye") {
+		const agentCommand = ['change_current_location', 'get_direction', 'nearby_cafe_current_location', 'nearby_cafe'];
+		if (agentCommand.includes(input.data.intent)) {
 			mapZoom = 14;
 			initLatitude 		= input.data.center_coordinates?.lat;
 			initLongtude 		= input.data.center_coordinates?.lng;
