@@ -79,13 +79,13 @@
         </p>
         <div class="space-y-2">
           <button
-            on:click={() => goto('/login')}
+            onclick={() => goto('/login')}
             class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md font-medium"
           >
             Try Again
           </button>
           <button
-            on:click={() => goto('/')}
+            onclick={() => goto('/')}
             class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md font-medium"
           >
             Go Home

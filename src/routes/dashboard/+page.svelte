@@ -37,7 +37,7 @@
   <header class="absolute inset-x-0 top-0 z-50">
     <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
       <div class="flex lg:flex-1">
-        <a href="#" on:click={() => goto('/')} class="-m-1.5 p-1.5">
+        <a href="#" onclick={() => goto('/')} class="-m-1.5 p-1.5">
           <span class="sr-only">Nearby Cafe</span>
           <h1 class="text-5xl">☕</h1>
         </a>
@@ -48,7 +48,7 @@
         <a href="#" class="text-sm/6 font-semibold text-gray-900">About</a> -->
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-        <a href="#" on:click={()=> handleLogout()} class="text-sm/6 font-semibold text-gray-900">Log out <span aria-hidden="true">&rarr;</span></a>
+        <a href="#" onclick={()=> handleLogout()} class="text-sm/6 font-semibold text-gray-900">Log out <span aria-hidden="true">&rarr;</span></a>
       </div>
     </nav>
   </header>
@@ -64,9 +64,9 @@
       </div>
       <div class="mt-10 flex items-center justify-center gap-x-6">
           {#if currentLocation==''}
-          <a href="#" on:click={initLocation} class="gap-2 inline-flex justify-center rounded-full text-sm/6 font-semibold text-gray-950 ring-1 ring-gray-950/10 hover:ring-gray-950/20 px-4 py-2">Get Your Current Location <svg fill="currentColor" aria-hidden="true" viewBox="0 0 10 10" class="-mr-0.5 w-2.5 fill-gray-600"><path d="M4.85355 0.146423L9.70711 4.99998L4.85355 9.85353L4.14645 9.14642L7.79289 5.49998H0V4.49998H7.79289L4.14645 0.85353L4.85355 0.146423Z"></path></svg></a>
+          <a href="#" onclick={initLocation} class="gap-2 inline-flex justify-center rounded-full text-sm/6 font-semibold text-gray-950 ring-1 ring-gray-950/10 hover:ring-gray-950/20 px-4 py-2">Get Your Current Location <svg fill="currentColor" aria-hidden="true" viewBox="0 0 10 10" class="-mr-0.5 w-2.5 fill-gray-600"><path d="M4.85355 0.146423L9.70711 4.99998L4.85355 9.85353L4.14645 9.14642L7.79289 5.49998H0V4.49998H7.79289L4.14645 0.85353L4.85355 0.146423Z"></path></svg></a>
           {/if}
-          <a href="#" on:click={()=>goto('/maps')} class="gap-2 inline-flex justify-center rounded-full text-sm/6 font-semibold text-gray-950 ring-1 ring-gray-950/10 hover:ring-gray-950/20 px-4 py-2">Get Nearby Cafe <svg fill="currentColor" aria-hidden="true" viewBox="0 0 10 10" class="-mr-0.5 w-2.5 fill-gray-600"><path d="M4.85355 0.146423L9.70711 4.99998L4.85355 9.85353L4.14645 9.14642L7.79289 5.49998H0V4.49998H7.79289L4.14645 0.85353L4.85355 0.146423Z"></path></svg></a>
+          <a href="#" onclick={()=>goto('/maps')} class="gap-2 inline-flex justify-center rounded-full text-sm/6 font-semibold text-gray-950 ring-1 ring-gray-950/10 hover:ring-gray-950/20 px-4 py-2">Get Nearby Cafe <svg fill="currentColor" aria-hidden="true" viewBox="0 0 10 10" class="-mr-0.5 w-2.5 fill-gray-600"><path d="M4.85355 0.146423L9.70711 4.99998L4.85355 9.85353L4.14645 9.14642L7.79289 5.49998H0V4.49998H7.79289L4.14645 0.85353L4.85355 0.146423Z"></path></svg></a>
       </div>
     </div>
     <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
