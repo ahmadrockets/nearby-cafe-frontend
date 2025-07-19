@@ -73,23 +73,7 @@ export async function getNearbyPlaces(latitude: string, longitude: string): Prom
   const json = await res.json();
   const places = json as NearbyPlacesResponse;
 
-  const placesRes: Array<LeafletPlace> = []
-
-  for (let index = 0; index < places.data.length; index++) {
-    const element = places.data[index];
-    const plc: LeafletPlace = {
-      lat: Number(element.latitude),
-      lng: Number(element.longitude),
-      latlang: [Number(element.latitude), Number(element.longitude)],
-      name: element.name,
-      email: element.email,
-      website: element.website,
-      instagram: element.social_media?.instagram,
-      twitter: element.social_media?.twitter,
-      location: element.location?.formatted_address
-    };    
-    placesRes.push(plc);
-  }
+  const placesRes = await processingLeafletPlace(places.data)
 
   return placesRes;
 }
@@ -113,4 +97,25 @@ export async function fetchRoute(start: [number, number], end:[number, number]):
   const resdata = json as GetRouteResponse;
   const route = resdata.data.features[0].geometry.coordinates
   return route;
+}
+
+export async function processingLeafletPlace(inputData: any): Promise<LeafletPlace[]>{
+  const placesRes: Array<LeafletPlace> = []
+  for (let index = 0; index < inputData.length; index++) {
+    const element = inputData[index];
+    const plc: LeafletPlace = {
+      lat: Number(element.latitude),
+      lng: Number(element.longitude),
+      latlang: [Number(element.latitude), Number(element.longitude)],
+      name: element.name,
+      email: element.email,
+      website: element.website,
+      instagram: element.social_media?.instagram,
+      twitter: element.social_media?.twitter,
+      location: element.location?.formatted_address
+    };
+    placesRes.push(plc);
+  }
+
+  return placesRes;
 }

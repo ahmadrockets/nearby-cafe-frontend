@@ -6,7 +6,7 @@
 	import Marker from '$lib/components/Marker.svelte';
 	import Popup from '$lib/components/Popup.svelte';
 	import Polyline from '$lib/components/Polyline.svelte';
-	import { fetchLocation, getNearbyPlaces, fetchRoute } from '$lib/utils/location';
+	import { fetchLocation, getNearbyPlaces, fetchRoute , processingLeafletPlace} from '$lib/utils/location';
 	import { fetchAgent } from "$lib/utils/chat";
 	import type {LeafletPlace} from '$lib/types/place';
   	import { authStore } from '$lib/stores/auth';
@@ -17,11 +17,14 @@
 	let mapZoom 		= $state(15)
 	let currentLocation = $state('');
 	let message 		= $state('');
+	let loadingchat 	= $state(false);
 	let chatHistory: { sender: 'user' | 'bot'; text: string }[] = $state([]);
 	let initLatitude 	= $state(PUBLIC_DEFAULT_LATITUDE);
 	let initLongtude 	= $state(PUBLIC_DEFAULT_LONGITUDE);
 	let initialView: LatLngExpression = $state([Number(initLatitude), Number(initLongtude)]);
 	let markerLocations: LeafletPlace[] 		= $state([]);
+	let markerRouteStart: LeafletPlace[] 		= $state([]);
+	let markerRouteEnd: LeafletPlace[] 			= $state([]);
 	let markerCurrentLocation: LeafletPlace[] 	= $state([{latlang: [Number(initLatitude), Number(initLongtude)], name: 'Current Location'}]);
 	let routeCoords: [number, number][] 		= $state([]);
 
@@ -61,6 +64,7 @@
 
 	async function handleChat(){
 		try {
+			loadingchat = true;
 			chatHistory.push({ sender: 'user', text: message });
 			let messageFetch = message;
 			message = '';
@@ -69,6 +73,7 @@
 			const agentRes = await fetchAgent(messageFetch, initLatitude, initLongtude);
 			chatHistory.push({sender:'bot', text: agentRes.data.answer});
 
+			loadingchat = false;
 			// handle agent
 			handleAgent(agentRes);
 
@@ -78,11 +83,50 @@
 	}
 
 	async function handleAgent(input: any){
+		// reset data
+		if (input.data.intent!="goodbye") {
+			mapZoom = 14;
+			initLatitude 		= input.data.center_coordinates?.lat;
+			initLongtude 		= input.data.center_coordinates?.lng;
+			initialView 		= [Number(input.data.center_coordinates.lat), Number(input.data.center_coordinates.lng)];
+			routeCoords 		= [];
+			markerRouteStart 	= [];
+			markerRouteEnd 		= [];
+			routeCoords 		= [];
+			markerCurrentLocation = [];	
+		}
 		switch (input.data.intent) {
 			case "change_current_location":
-				initialView 	= [Number(input.data.center_coordinates.lat), Number(input.data.center_coordinates.lng)];
-				markerCurrentLocation = [];
-				markerCurrentLocation = [{latlang: [Number(input.data.center_coordinates.lat), Number(input.data.center_coordinates.lng)], name: 'Current Location'}];
+				markerCurrentLocation = [
+					{ latlang: [Number(input.data.center_coordinates.lat), Number(input.data.center_coordinates.lng)], name: input.data.details.display_name }
+				];
+				break;
+			case "get_direction":
+				markerRouteStart = [
+					{ latlang: [Number(input.data.start_coordinates.lat), Number(input.data.start_coordinates.lng)], name: input.data.entities.start }
+				];
+				markerRouteEnd = [
+					{ latlang: [Number(input.data.end_coordinates.lat), Number(input.data.end_coordinates.lng)], name: input.data.entities.end }
+				];
+				routeCoords = input.data.details.features[0].geometry.coordinates.map(
+					([lng, lat]: [number, number]) => [lat, lng]
+				);
+				break;
+			case "nearby_cafe_current_location":
+				markerLocations = [];
+				markerCurrentLocation = [
+					{ latlang: [Number(input.data.center_coordinates.lat), Number(input.data.center_coordinates.lng)], name: input.data.details.display_name }
+				];
+				const nearbyPlaceRes = await processingLeafletPlace(input.data.details)
+				markerLocations = nearbyPlaceRes;
+				break;
+			case "nearby_cafe":
+				markerLocations = [];
+				markerCurrentLocation = [
+					{ latlang: [Number(input.data.center_coordinates.lat), Number(input.data.center_coordinates.lng)], name: input.data.details.display_name }
+				];
+				const nearbyCafeRes = await processingLeafletPlace(input.data.details)
+				markerLocations = nearbyCafeRes;
 				break;
 		
 			default:
@@ -114,6 +158,9 @@
 			{#each chatHistory as chat}
 				<div class="{chat.sender === 'user' ? 'bg-gray-100 rounded-xl text-secondary-foreground p-3 w-max ml-auto' : 'p-3'}">{chat.text}</div> 
 			{/each}
+			{#if loadingchat }
+			<div class="p-3">...</div> 
+			{/if}
         </div>
 
         <form class="p-4 border-t flex gap-2 bg-white ">
@@ -141,7 +188,33 @@
 				</svg>
 
 				<Popup>
-					Your Current Location
+					{rowCurrentLocation.name}
+				</Popup>
+			</Marker>
+		{/each}
+
+		{#each markerRouteStart as markerStart}
+			<Marker latLng={markerStart.latlang} width={40} height={40}>
+				<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 64 64">
+					<circle cx="32" cy="32" r="8" fill="#ff0000" />
+					<circle cx="32" cy="32" r="16" fill="none" stroke="#ff0000" stroke-width="3" stroke-opacity="0.5" />
+				</svg>
+
+				<Popup>
+					{markerStart.name}
+				</Popup>
+			</Marker>
+		{/each}
+
+		{#each markerRouteEnd as markerEnd}
+			<Marker latLng={markerEnd.latlang} width={40} height={40}>
+				<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 64 64">
+					<circle cx="32" cy="32" r="8" fill="#ff0000" />
+					<circle cx="32" cy="32" r="16" fill="none" stroke="#ff0000" stroke-width="3" stroke-opacity="0.5" />
+				</svg>
+
+				<Popup>
+					{markerEnd.name}
 				</Popup>
 			</Marker>
 		{/each}

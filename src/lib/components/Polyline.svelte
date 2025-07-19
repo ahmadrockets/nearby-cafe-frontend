@@ -24,6 +24,11 @@
 		}
 	});
 
+	$: if (map && polyline && positions.length > 0) {
+		polyline.setLatLngs(positions);
+		polyline.setStyle({ color, weight });
+	}
+
 	onDestroy(() => {
 		polyline?.remove();
 		polyline = undefined;
