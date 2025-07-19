@@ -13,7 +13,6 @@
 	const map = getMap();
 
 	setContext('layer', {
-		// L.Marker inherits from L.Layer
 		getLayer: () => marker
 	});
 
@@ -27,6 +26,10 @@
 			marker = L.marker(latLng, { icon }).addTo(map);
 		}
 	});
+
+	$: if (marker && latLng) {
+		marker.setLatLng(latLng);
+	}
 
 	onDestroy(() => {
 		marker?.remove();
