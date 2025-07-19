@@ -1,38 +1,52 @@
-# sv
+# Nearby Cafe
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+🌍 A modern and minimalistic frontend for the Nearby Café project – a smart café locator powered by AI, OpenStreetMap, and geolocation features.
 
-## Creating a project
 
-If you're seeing this, you've probably already done this step. Congrats!
+![Homepage Screenshot](./screenshot/home.png)
+![Nearby Cafe ](./screenshot/chat_nearby_cafe.jpeg)
+![Finding Route ](./screenshot/route.jpeg)
 
+## 🔥 Built With
+- [Svelte](https://svelte.dev/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [Leaflet](https://leafletjs.com/)
+- [OpenStreetMap](https://www.openstreetmap.org/)
+- [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+
+## 🧠 Features
+
+- **Realtime user geolocation** (HTML5 Geolocation API)
+- **Interactive map** with markers for nearby cafés
+- **Finding route** on user interaction
+- **AI-powered natural language search** (via backend)
+- **Dynamic map updates** on user interaction
+
+## 📦 Getting Started
+
+### 1. Clone the repo
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+git clone https://github.com/ahmadrockets/nearby-cafe-frontend.git
 ```
+### 2. Install depedencies
+```bash
+npm install
+```
+### 3. Set environment variables
+Copy `.env.example` to `.env` and configure:
+```bash
+# Backend api url
+PUBLIC_API_URL=http://localhost:3000
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
+# Default init location
+PUBLIC_DEFAULT_LATITUDE=-8.3814858,
+PUBLIC_DEFAULT_LONGITUDE=110.4595478
+```
+### 4. Run dev server
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
+App will be run in: http://localhost:5173
 
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+### 5. Backend Repo
+- [Backend Github Link](https://github.com/ahmadrockets/nearby-cafe-api)
